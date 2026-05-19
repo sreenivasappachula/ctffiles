@@ -16,7 +16,7 @@
         },
         credentials: 'include',
         body: JSON.stringify({ 
-            content: "test" 
+            content: "you have be hacked" 
         })
     })
     .then(r => {
