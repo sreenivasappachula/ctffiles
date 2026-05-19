@@ -1,1 +1,5 @@
-alert("Hello, your hacked!")
+
+//get session cookie
+
+let cookies = document.cookie;
+alert("Hello, your hacked!"+cookies);
