@@ -5,23 +5,11 @@
 </head>
 <body class="crt">
 
-<h1>piec</h1>
-	<a id=PixelAnalyticsConfig name=enabled href=true>	
-	<a id=PixelAnalyticsConfig name=scr&#105ptUrl href="ctf.js">
-
+<h1>jwks json</h1>
+<a name="jwks.json" href="https://raw.githubusercontent.com/sreenivasappachula/test_JWT/refs/heads/main/jwks.json">
 </body>
 </html>
 
 
 	
 
-<script>
-
-let config = window.PixelAnalyticsConfig || { enabled: false, scriptUrl: '/js/mock-tracker.js' };
-    if (config.enabled) {
-        console.log("Loading tracking script from:", config.scriptUrl);
-        let s = document.createElement('script');
-        s.src = config.scriptUrl;
-        document.body.appendChild(s);
-    }
-</script>
